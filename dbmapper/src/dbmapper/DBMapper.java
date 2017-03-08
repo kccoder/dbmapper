@@ -19,6 +19,9 @@ import java.util.List;
 
 public interface DBMapper {
 	
+	/** Returns the table associated with this class */
+	public String getTableName(Class<?> clazz);
+	
 	// returns any auto-generated ID and expects it to be a long
 	// future versions should return List<Map<String, Object>> and
 	// let the user decide how to deal any returned values

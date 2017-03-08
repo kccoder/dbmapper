@@ -45,6 +45,11 @@ public class DefaultDBMapper implements DBMapper {
 		this.typeConverter = typeConverter;
 	}
 	
+	public String getTableName(Class<?> clazz) {
+		return StringUtils.fromCamelCaseToUnderscores(clazz.getSimpleName());
+		
+	}	
+	
 	// consider creating and caching a single insert statement like updates
 	// for possible performance gains.  a downside is that it may attempt to
 	// to insert a bunch of unnecessary columns, if it is trying to insert all
@@ -192,12 +197,7 @@ public class DefaultDBMapper implements DBMapper {
 		String getter = "get" + StringUtils.capitalize(propertyName);
 		return reflectionHelper.invokeGetterIfExists(object, getter);
 	}
-		
-	private static String getTableName(Class<?> clazz) {
-		return StringUtils.fromCamelCaseToUnderscores(clazz.getSimpleName());
-		
-	}
-	
+			
 	private static String toMethodName(String prefix, String columnName) {
 		return prefix + StringUtils.capitalize(StringUtils.fromUnderscoresToCamelCase(columnName));
 	}
