@@ -34,7 +34,7 @@ public class DefaultTypeConverter implements TypeConverter {
 	private Map<Class<?>, ExactTypeConverter<?>> map = new HashMap<>();
 
 	public DefaultTypeConverter() {
-		put(Boolean.class, int.class, (rs, cname)->{return rs.getBoolean(cname);}, (ps, i, value)->{ps.setBoolean(i, value);});
+		put(Boolean.class, boolean.class, (rs, cname)->{return rs.getBoolean(cname);}, (ps, i, value)->{ps.setBoolean(i, value);});
 		put(Byte.class, byte.class, (rs, cname)->{return rs.getByte(cname);}, (ps, i, value)->{ps.setByte(i, value);});
 		put(Short.class, short.class, (rs, cname)->{return rs.getShort(cname);}, (ps, i, value)->{ps.setShort(i, value);});
 		put(Integer.class, int.class, (rs, cname)->{return rs.getInt(cname);}, (ps, i, value)->{ps.setInt(i, value);});
