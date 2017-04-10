@@ -27,12 +27,14 @@ public interface DBMapper {
 	// let the user decide how to deal any returned values
 	/** Insert object into its table (based on class name) and return any auto-generated Long field. */
 	public Long insert(Object object);
-
+	public Long insert(String tableName, Object object);
+	
 	// currently determines which column(s) are used to identify this record
 	// based on the table definition of primary key(s).
 	// it might make sense to provide more flexible update functionality in a future version
 	/** Update the record which corresponds to this object based on the primary key(s) of the table. */
 	public void update(Object object);
+	public void update(String tableName, Object object);
 	
 
 	/** Build a single instance of the passed in class from the ResultSet. This method does not call rs.next(). */

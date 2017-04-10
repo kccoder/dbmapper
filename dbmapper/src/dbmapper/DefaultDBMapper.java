@@ -46,9 +46,13 @@ public class DefaultDBMapper implements DBMapper {
 	}
 	
 	public String getTableName(Class<?> clazz) {
-		return StringUtils.fromCamelCaseToUnderscores(clazz.getSimpleName());
-		
-	}	
+		TableName dbname = clazz.getAnnotation(TableName.class);
+		if (dbname == null) {
+			return StringUtils.fromCamelCaseToUnderscores(clazz.getSimpleName());			
+		} else {
+			return dbname.value();
+		}
+	}
 	
 	// consider creating and caching a single insert statement like updates
 	// for possible performance gains.  a downside is that it may attempt to
@@ -56,9 +60,11 @@ public class DefaultDBMapper implements DBMapper {
 	// columns, including null values.  this might also affect how null/default
 	// value columns behave.  need to investigate that more thoroughly.
 	public Long insert(Object object) {
+		return insert(getTableName(object.getClass()), object);
+	}
+	
+	public Long insert(String tableName, Object object) {
 		try (AutoCloseables closeables = new AutoCloseables()) {
-			Class<?> clazz = object.getClass();
-			String tableName = getTableName(clazz);
 			TableHelper tableHelper = databaseHelper.getTableHelper(connection, tableName);
 			List<String> columns = new ArrayList<String>();
 			List<Object> values = new ArrayList<Object>();
@@ -98,11 +104,14 @@ public class DefaultDBMapper implements DBMapper {
 			throw new DBMapperException(e);
 		}
 	}
-
+	
 	public void update(Object object) {
+		update(getTableName(object.getClass()), object);
+	}
+
+	public void update(String tableName, Object object) {
 		try {
 			Class<?> clazz = object.getClass();
-			String tableName = getTableName(clazz);
 			TableHelper tableHelper = databaseHelper.getTableHelper(connection, tableName);
 			ClassHelper classHelper = reflectionHelper.getClassHelper(clazz);
 			UpdateHelper updateHelper = tableHelper.getUpdateHelper();

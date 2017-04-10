@@ -17,7 +17,11 @@ package dbmapper;
 import java.sql.Connection;
 
 public class DefaultDBMapperFactory implements DBMapperFactory {
-	private static final TypeConverter typeConverter = new DefaultTypeConverter();
+	private static TypeConverter typeConverter = new DefaultTypeConverter();
+	
+	public static void setTypeConverter(TypeConverter typeConverter) {
+		DefaultDBMapperFactory.typeConverter = typeConverter;
+	}
 	
 	public DBMapper getDBMapperInstance(Connection connection) {
 		return new DefaultDBMapper(connection, typeConverter);
