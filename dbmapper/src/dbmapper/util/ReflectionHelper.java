@@ -20,8 +20,7 @@ import java.util.Map;
 
 public class ReflectionHelper {
 	private Map<Class<?>, ClassHelper> classes = Collections.synchronizedMap(new HashMap<>());
-	
-	
+		
 	public boolean doesSetterExist(Class<?> clazz, String methodName) {
 		ClassHelper helper = getClassHelper(clazz);
 		return helper.getSetter(methodName) != null;
@@ -38,25 +37,14 @@ public class ReflectionHelper {
 			setter.setValue(object, value);
 		}
 	}
-
-	public Object invokeGetterIfExists(Object object, String methodName) throws Exception {
-		Getter getter = getClassHelper(object.getClass()).getGetter(methodName);
+	
+	public Object invokeGetterIfExistsForProperty(Object object, String propertyName) throws Exception {
+		Getter getter = getClassHelper(object.getClass()).getGetterForProperty(propertyName);
 		if (getter != null) {
 			return getter.getValue(object);
 		}
-		return null;
+		return null;		
 	}
-	
-	public boolean doesGetterExistForProperty(Class<?> clazz, String propertyName) {
-		return doesGetterExist(clazz, "get" + StringUtils.capitalize(propertyName));
-	}
-	
-	public boolean doesGetterExist(Class<?> clazz, String methodName) {
-		ClassHelper helper = getClassHelper(clazz);
-		return helper.getGetter(methodName) != null;
-	}
-	
-	
 
 	public ClassHelper getClassHelper(Class<?> clazz) {
 		ClassHelper ch = classes.get(clazz);

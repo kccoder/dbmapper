@@ -21,7 +21,7 @@ import java.util.Map;
 public class ClassHelper {
 	private Class<?> clazz;
 	private Map<String, Setter> setters = new HashMap<>();
-	private Map<String, Getter> getters = new HashMap<>();
+	private Map<String, Getter> propertyGetters = new HashMap<>();
 	
 	public ClassHelper(Class<?> clazz) {
 		this.clazz = clazz;
@@ -30,9 +30,20 @@ public class ClassHelper {
 			if (isSetter(method)) {
 				setters.put(method.getName(), new Setter(method));
 			} else if (isGetter(method)) {
-				getters.put(method.getName(), new Getter(method));
+				propertyGetters.put(getPropertyName(method), new Getter(method));
+				propertyGetters.put(getPropertyName(method), new Getter(method));				
 			}
+		}		
+	}
+	
+	private String getPropertyName(Method method) {
+		String name = method.getName();
+		if ((name.startsWith("set") || name.startsWith("get")) && name.length() > 3) {
+			name = StringUtils.uncapitalize(name.substring(3));
+		} else if (name.startsWith("is") && name.length() > 2) {
+			name = StringUtils.uncapitalize(name.substring(2));			
 		}
+		return name;
 	}
 	
 	public Object newInstance() throws Exception {
@@ -47,12 +58,8 @@ public class ClassHelper {
 		return setters.get(methodName);
 	}
 	
-	public Getter getGetter(String methodName) {
-		return getters.get(methodName);
-	}
-	
 	public Getter getGetterForProperty(String propertyName) {
-		return getters.get("get" + StringUtils.capitalize(propertyName));
+		return propertyGetters.get(propertyName);
 	}
 
 	public Setter getSetterForProperty(String propertyName) {
@@ -64,9 +71,16 @@ public class ClassHelper {
 		if (!method.getName().startsWith("set")) return false;
 		return method.getParameterCount() == 1;
 	}
-	
+
 	private boolean isGetter(Method method) {
-		if (!method.getName().startsWith("get")) return false;
-		return method.getParameterCount() == 0;
+		if (method.getParameterCount() != 0) return false;
+		
+		String name = method.getName();
+		int length = name.length();
+
+		if (method.getName().startsWith("get")) return length > 3;
+		if (method.getName().startsWith("is")) return length > 2;
+		
+		return false;
 	}
 }

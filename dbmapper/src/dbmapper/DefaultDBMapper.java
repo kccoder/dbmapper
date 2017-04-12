@@ -203,8 +203,7 @@ public class DefaultDBMapper implements DBMapper {
 	}
 	
 	private Object getValue(Object object, String propertyName) throws Exception {
-		String getter = "get" + StringUtils.capitalize(propertyName);
-		return reflectionHelper.invokeGetterIfExists(object, getter);
+		return reflectionHelper.invokeGetterIfExistsForProperty(object, propertyName);
 	}
 			
 	private static String toMethodName(String prefix, String columnName) {
