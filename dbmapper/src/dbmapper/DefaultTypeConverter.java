@@ -25,8 +25,13 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import dbmapper.util.StringUtils;
 
@@ -68,7 +73,33 @@ public class DefaultTypeConverter implements TypeConverter {
 				return (t == null)?null:t.toLocalTime();	
 			}, 
 			(ps, i, value)->{ps.setTime(i, Time.valueOf(value));}
-		);				
+		);
+		
+		put(OffsetDateTime.class, (rs, cname) -> {
+				Timestamp t = rs.getTimestamp(cname);
+				if (t == null) return null;
+				LocalDateTime ldt = t.toLocalDateTime();
+				return OffsetDateTime.of(ldt, ZoneOffset.ofHours(-t.getTimezoneOffset()/60));
+			}, 
+			(ps, i, value) -> {
+				Timestamp t = Timestamp.valueOf(value.toLocalDateTime());
+				Calendar c = Calendar.getInstance(TimeZone.getTimeZone(value.toZonedDateTime().getZone()));
+				ps.setTimestamp(i, t, c);
+			}
+		);
+		
+		put(ZonedDateTime.class, (rs, cname) -> {
+				Timestamp t = rs.getTimestamp(cname);
+				if (t == null) return null;
+				LocalDateTime ldt = t.toLocalDateTime();
+				return OffsetDateTime.of(ldt, ZoneOffset.ofHours(-t.getTimezoneOffset()/60)).toZonedDateTime();
+			}, 
+			(ps, i, value) -> {
+				Timestamp t = Timestamp.valueOf(value.toLocalDateTime());
+				Calendar c = Calendar.getInstance(TimeZone.getTimeZone(value.getZone()));
+				ps.setTimestamp(i, t, c);
+			}
+		);
 	}
 	
 	public <T> void put(Class<?> clazz, LambdaExactTypeConverter.ValueGetter<T> valueGetter, 
