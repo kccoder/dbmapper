@@ -82,7 +82,7 @@ public class DefaultTypeConverter implements TypeConverter {
 				return OffsetDateTime.of(ldt, ZoneOffset.ofHours(-t.getTimezoneOffset()/60));
 			}, 
 			(ps, i, value) -> {
-				Timestamp t = Timestamp.valueOf(value.toLocalDateTime());
+				Timestamp t = new Timestamp(value.toInstant().toEpochMilli());
 				Calendar c = Calendar.getInstance(TimeZone.getTimeZone(value.toZonedDateTime().getZone()));
 				ps.setTimestamp(i, t, c);
 			}
@@ -95,7 +95,7 @@ public class DefaultTypeConverter implements TypeConverter {
 				return OffsetDateTime.of(ldt, ZoneOffset.ofHours(-t.getTimezoneOffset()/60)).toZonedDateTime();
 			}, 
 			(ps, i, value) -> {
-				Timestamp t = Timestamp.valueOf(value.toLocalDateTime());
+				Timestamp t = new Timestamp(value.toInstant().toEpochMilli());
 				Calendar c = Calendar.getInstance(TimeZone.getTimeZone(value.getZone()));
 				ps.setTimestamp(i, t, c);
 			}

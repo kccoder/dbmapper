@@ -38,7 +38,7 @@ public class TableHelper {
 					column.setName(columnsrs.getString("COLUMN_NAME"));
 					column.setPropertyName(StringUtils.uncapitalize(StringUtils.fromUnderscoresToCamelCase(column.getName())));
 //					column.setGeneratedColumn(columnsrs.getBoolean("IS_GENERATEDCOLUMN"));
-					column.setAutoIncrement(columnsrs.getBoolean("IS_AUTOINCREMENT"));
+					column.setAutoIncrement("YES".equalsIgnoreCase(columnsrs.getString("IS_AUTOINCREMENT")));
 				columns.put(column.getName(), column);
 			}
 
